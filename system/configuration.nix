@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, writeScript, lib, stdenv, ... }:
 
 let
   change-mac = pkgs.writeShellScript "change-mac" ''
@@ -34,7 +34,7 @@ in {
     binaryCaches =
       [ "https://cache.nixos.org" "https://nixpkgs-wayland.cachix.org" ];
   };
-  # Use the systemd-boot EFI boot loader.
+
   boot.loader.grub.enable = true;
   boot.loader.grub.devices = [ "nodev" ];
   boot.loader.grub.efiInstallAsRemovable = true;
@@ -50,15 +50,15 @@ in {
 
   systemd.services.macchanger = {
     enable = true;
-    description = "macchanger on wlo1";
+    description = "macchanger on wlan0";
     wants = [ "network-pre.target" ];
     before = [ "network-pre.target" ];
-    bindsTo = [ "sys-subsystem-net-devices-wlo1.device" ];
-    after = [ "sys-subsystem-net-devices-wlo1.device" ];
+    bindsTo = [ "sys-subsystem-net-devices-wlan0.device" ];
+    after = [ "sys-subsystem-net-devices-wlan0.device" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${change-mac} wlo1";
+      ExecStart = "${change-mac} wlan0";
     };
   };
 
@@ -83,12 +83,13 @@ in {
     inputs.nixpkgs-wayland.packages.${system}.wlr-randr
     inputs.nixpkgs-wayland.packages.${system}.wlroots
     inputs.nixpkgs-wayland.packages.${system}.obs-wlrobs
+    stow
     git
     delta
     macchanger
     zig
     river
-    alacritty
+    kitty
     gnome.nautilus
     neovim
     curl
@@ -114,39 +115,27 @@ in {
     ffmpeg
     xplr
     glow
+    lm_sensors
+    btrfs-progs
   ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
   };
 
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  services.dbus.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    jack.enable = true;
+  };
+  xdg.portal.wlr.enable = true;
 
-  # Copy the NixOS configuration file and link it from the resulting system
-  # (/run/current-system/configuration.nix). This is useful in case you
-  # accidentally delete configuration.nix.
-  # system.copySystemConfiguration = true;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.05"; # Did you read the comment?
-
+  system.stateVersion = "22.05";
 }
 

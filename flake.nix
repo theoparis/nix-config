@@ -2,13 +2,17 @@
   description = "Theo's System Config";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    nixpkgs-wayland = { url = "github:nix-community/nixpkgs-wayland"; };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    nixpkgs-wayland = { url = "github:nix-community/nixpkgs-wayland"; };
     nixpkgs-wayland.inputs.master.follows = "master";
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, ... }@inputs:
+  outputs = { nixpkgs, hyprland, ... }@inputs:
     let
       system = "x86_64-linux";
 
@@ -24,7 +28,11 @@
           inherit system;
           specialArgs = { inherit inputs; };
 
-          modules = [ ./system/configuration.nix ];
+          modules = [
+            ./system/configuration.nix
+            hyprland.nixosModules.default
+            { programs.hyprland.enable = true; }
+          ];
         };
       };
     };

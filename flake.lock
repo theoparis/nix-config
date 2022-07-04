@@ -47,6 +47,27 @@
         "type": "github"
       }
     },
+    "hyprland": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "wlroots": "wlroots"
+      },
+      "locked": {
+        "lastModified": 1656885896,
+        "narHash": "sha256-miRHAiW7TbOA/j0LHAWVj3KkdFcCCPm1akDH5BIiyBw=",
+        "owner": "hyprwm",
+        "repo": "Hyprland",
+        "rev": "fc3957d5381ea7dad4f180bb1b0d25977fbb874e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hyprwm",
+        "repo": "Hyprland",
+        "type": "github"
+      }
+    },
     "lib-aggregate": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -76,9 +97,10 @@
         "type": "github"
       },
       "original": {
-        "id": "nixpkgs",
+        "owner": "NixOS",
         "ref": "nixos-unstable",
-        "type": "indirect"
+        "repo": "nixpkgs",
+        "type": "github"
       }
     },
     "nixpkgs-lib": {
@@ -135,8 +157,27 @@
     },
     "root": {
       "inputs": {
+        "hyprland": "hyprland",
         "nixpkgs": "nixpkgs",
         "nixpkgs-wayland": "nixpkgs-wayland"
+      }
+    },
+    "wlroots": {
+      "flake": false,
+      "locked": {
+        "host": "gitlab.freedesktop.org",
+        "lastModified": 1655824477,
+        "narHash": "sha256-1kskHOLsnisR3kqIL5IHrQbQG/4xoXxeEf1ExMV6/RU=",
+        "owner": "wlroots",
+        "repo": "wlroots",
+        "rev": "5c4384a1330faedf975c8b8644881d50390f3613",
+        "type": "gitlab"
+      },
+      "original": {
+        "host": "gitlab.freedesktop.org",
+        "owner": "wlroots",
+        "repo": "wlroots",
+        "type": "gitlab"
       }
     }
   },
